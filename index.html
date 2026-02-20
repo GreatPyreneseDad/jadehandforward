@@ -1079,5 +1079,23 @@ function register(e){
   document.getElementById('coinNav').textContent=`J~ ${coins} left`;
 }
 </script>
+
+<!-- API Integration -->
+<script src="api-config.js"></script>
+<script>
+// Load live auction data on page load
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const auction = await getLiveAuction();
+    if (auction && auction.auction_lots) {
+      console.log('Live auction loaded:', auction);
+      // Update UI with real auction data
+      // You can enhance this to dynamically update the auction section
+    }
+  } catch (error) {
+    console.error('Failed to load auction:', error);
+  }
+});
+</script>
 </body>
 </html>
