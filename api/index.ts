@@ -29,7 +29,7 @@ app.use('/api/coins/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 // Health check
-app.get('/health', (req: Request, res: Response) => {
+app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
