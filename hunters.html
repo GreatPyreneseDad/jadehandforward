@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jade Hunters — JadeHandForward</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --ocean-abyss:   #040d14;
+  --ocean-deep:    #061a2a;
+  --ocean-dark:    #0a2a3a;
+  --ocean-mid:     #0e3d52;
+  --ocean-teal:    #1a6b7a;
+  --ocean-bright:  #2a9ba8;
+  --ocean-foam:    #5ec4cc;
+  --ocean-pale:    #a8dfe3;
+  --jade-mid:      #1a3d28;
+  --jade-green:    #2d6a4f;
+  --jade-light:    #52b788;
+  --jade-pale:     #95d5b2;
+  --coin-gold:     #c9a84c;
+  --coin-warm:     #e8c97a;
+  --coin-deep:     #8a6820;
+  --text-primary:  #dff0ee;
+  --text-muted:    #6a8f88;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--ocean-abyss);
+  color: var(--text-primary);
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
+
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:999;
+}
+
+/* NAV */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(4,13,20,0.93); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(42,155,168,0.2);
+  padding:0.8rem 2rem;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'Space Mono',monospace; font-size:0.7rem; letter-spacing:0.15em;
+}
+.nav-logo { color:var(--ocean-foam); }
+.nav-logo span { color:var(--coin-gold); }
+.nav-back {
+  color:var(--text-muted); text-decoration:none;
+  border-bottom:1px solid transparent; transition:all 0.2s;
+  letter-spacing:0.2em;
+}
+.nav-back:hover { color:var(--ocean-foam); border-color:var(--ocean-foam); }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex;
+  flex-direction:column; justify-content:center;
+  align-items:flex-start; padding:0 4rem;
+  position:relative; overflow:hidden;
+}
+
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 80%, rgba(26,107,122,0.12) 0%, transparent 60%),
+    linear-gradient(160deg, var(--ocean-abyss) 0%, var(--ocean-deep) 60%, rgba(13,36,22,0.6) 100%);
+}
+
+.hero-coast {
+  position:absolute; bottom:0; left:0; right:0; height:45%; pointer-events:none;
+}
+
+.hero-content { position:relative; z-index:10; max-width:680px; }
+
+.hero-eyebrow {
+  font-family:'Space Mono',monospace; font-size:0.65rem;
+  letter-spacing:0.4em; color:var(--ocean-bright);
+  text-transform:uppercase; margin-bottom:1.5rem;
+}
+
+.hero-coin {
+  font-family:'Space Mono',monospace;
+  font-size:clamp(3.5rem,8vw,6rem);
+  color:var(--coin-gold); line-height:1;
+  text-shadow:0 0 50px rgba(201,168,76,0.35);
+  display:block; margin-bottom:0.5rem;
+  animation:glow 5s ease-in-out infinite;
+}
+@keyframes glow {
+  0%,100%{ text-shadow:0 0 50px rgba(201,168,76,0.35); }
+  50%{ text-shadow:0 0 90px rgba(201,168,76,0.55); }
+}
+
+.hero-title {
+  font-size:clamp(2.5rem,6vw,5rem); font-weight:300;
+  line-height:1.05; color:var(--text-primary); margin-bottom:1.25rem;
+}
+.hero-title em { font-style:italic; color:var(--ocean-pale); }
+
+.hero-body {
+  font-size:clamp(1rem,2vw,1.3rem); font-style:italic;
+  color:var(--text-muted); line-height:1.7; margin-bottom:2.5rem;
+  max-width:480px;
+}
+
+.btn-ocean {
+  background:linear-gradient(135deg,var(--ocean-teal),var(--ocean-mid));
+  border:1px solid var(--ocean-bright); color:var(--text-primary);
+  padding:0.9rem 2.5rem; font-family:'Space Mono',monospace;
+  font-size:0.72rem; letter-spacing:0.25em; text-transform:uppercase;
+  text-decoration:none; display:inline-block; transition:all 0.3s; cursor:pointer;
+}
+.btn-ocean:hover {
+  background:linear-gradient(135deg,var(--ocean-bright),var(--ocean-teal));
+  color:var(--ocean-abyss);
+}
+
+/* DIVIDER */
+hr { border:none; border-top:1px solid rgba(42,155,168,0.12); }
+
+/* SECTIONS */
+.section { padding:6rem 4rem; max-width:900px; margin:0 auto; }
+@media(max-width:640px){ .section { padding:4rem 1.5rem; } }
+
+.section-eyebrow {
+  font-family:'Space Mono',monospace; font-size:0.62rem;
+  letter-spacing:0.4em; color:var(--ocean-bright);
+  text-transform:uppercase; margin-bottom:0.75rem;
+}
+.section-title {
+  font-size:clamp(1.8rem,4vw,3rem); font-weight:300;
+  color:var(--text-primary); line-height:1.1; margin-bottom:1rem;
+}
+.section-title em { font-style:italic; color:var(--ocean-pale); }
+.section-body {
+  font-size:1.05rem; font-style:italic; color:var(--text-muted);
+  line-height:1.8; max-width:560px;
+}
+
+/* HOW IT WORKS FOR HUNTERS */
+.steps {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:2.5rem; margin-top:3.5rem;
+}
+.step-n {
+  font-family:'Space Mono',monospace; font-size:2rem;
+  color:rgba(42,155,168,0.15); margin-bottom:0.75rem;
+}
+.step-t { font-size:1.1rem; color:var(--ocean-pale); margin-bottom:0.4rem; }
+.step-d { font-size:0.95rem; color:var(--text-muted); font-style:italic; line-height:1.6; }
+
+/* FORM */
+.form-wrap {
+  padding:6rem 4rem; max-width:780px; margin:0 auto;
+}
+@media(max-width:640px){ .form-wrap { padding:4rem 1.5rem; } }
+
+.form { display:flex; flex-direction:column; gap:2rem; }
+
+.f-label {
+  display:block; font-family:'Space Mono',monospace; font-size:0.6rem;
+  letter-spacing:0.25em; color:var(--ocean-bright); text-transform:uppercase;
+  margin-bottom:0.5rem;
+}
+.f-hint { font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-top:0.35rem; line-height:1.5; }
+
+input, textarea, select {
+  width:100%; background:rgba(10,42,58,0.5);
+  border:1px solid rgba(42,155,168,0.25); color:var(--text-primary);
+  padding:0.85rem 1rem; font-family:'Cormorant Garamond',serif;
+  font-size:1rem; outline:none; transition:border-color 0.3s; appearance:none;
+}
+input:focus, textarea:focus, select:focus { border-color:var(--ocean-foam); }
+input::placeholder, textarea::placeholder { color:rgba(106,143,136,0.5); font-style:italic; }
+textarea { min-height:110px; resize:vertical; }
+select option { background:var(--ocean-deep); }
+
+.row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+@media(max-width:580px){ .row { grid-template-columns:1fr; } }
+
+/* STONE CHECKS */
+.stone-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:0.6rem; margin-top:0.4rem;
+}
+.sc {
+  border:1px solid rgba(42,155,168,0.2); padding:0.8rem 1rem;
+  cursor:pointer; display:flex; gap:0.65rem; align-items:center;
+  background:rgba(10,42,58,0.3); transition:all 0.25s; user-select:none;
+}
+.sc:hover { border-color:var(--ocean-teal); }
+.sc.on { border-color:var(--jade-light); background:rgba(26,61,40,0.25); }
+.sc-box {
+  width:14px; height:14px; border:1px solid rgba(42,155,168,0.4);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:0.6rem; color:var(--jade-light);
+}
+.sc.on .sc-box { border-color:var(--jade-light); }
+.sc span { font-size:0.88rem; color:var(--text-primary); }
+
+/* VOLUME */
+.vol-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:0.6rem; margin-top:0.4rem;
+}
+.vo {
+  border:1px solid rgba(42,155,168,0.2); padding:0.9rem;
+  cursor:pointer; text-align:center; transition:all 0.25s;
+  background:rgba(10,42,58,0.3);
+}
+.vo:hover { border-color:var(--ocean-teal); }
+.vo.on { border-color:var(--coin-gold); background:rgba(201,168,76,0.06); }
+.vo strong { font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--ocean-foam); display:block; margin-bottom:0.2rem; }
+.vo span { font-size:0.8rem; color:var(--text-muted); font-style:italic; }
+
+/* COMMISSION TOGGLE */
+.comm-toggle {
+  border:1px solid rgba(82,183,136,0.2);
+  background:rgba(10,42,58,0.3);
+  padding:1.5rem; cursor:pointer; transition:all 0.3s;
+  display:flex; gap:1rem; align-items:flex-start;
+}
+.comm-toggle:hover { border-color:var(--jade-light); }
+.comm-toggle.on { border-color:var(--jade-light); background:rgba(26,61,40,0.2); }
+.ct-box {
+  width:18px; height:18px; border:1px solid var(--jade-green);
+  flex-shrink:0; margin-top:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.65rem; color:var(--jade-light);
+}
+.ct-title { font-size:1rem; color:var(--jade-pale); margin-bottom:0.25rem; }
+.ct-desc { font-size:0.88rem; color:var(--text-muted); font-style:italic; line-height:1.55; }
+
+/* SUBMIT */
+.submit-area { text-align:center; padding-top:1rem; }
+.submit-note { font-size:0.9rem; color:var(--text-muted); font-style:italic; margin-bottom:1.5rem; line-height:1.6; }
+.submit-btn {
+  background:linear-gradient(135deg,var(--jade-mid),rgba(13,36,22,0.9));
+  border:1px solid var(--jade-light); color:var(--jade-pale);
+  padding:1.1rem 3.5rem; font-family:'Space Mono',monospace;
+  font-size:0.72rem; letter-spacing:0.3em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.3s; width:100%;
+}
+.submit-btn:hover {
+  background:linear-gradient(135deg,var(--jade-light),var(--jade-green));
+  color:var(--ocean-abyss);
+}
+
+/* SUCCESS */
+.success {
+  display:none; position:fixed; inset:0; z-index:500;
+  background:rgba(4,13,20,0.97); backdrop-filter:blur(8px);
+  flex-direction:column; gap:1.5rem;
+  align-items:center; justify-content:center;
+  text-align:center; padding:2rem;
+}
+.success.show { display:flex; }
+.s-coin { font-family:'Space Mono',monospace; font-size:3.5rem; color:var(--coin-gold); animation:glow 3s ease-in-out infinite; }
+.s-title { font-size:2.2rem; font-weight:300; font-style:italic; color:var(--text-primary); }
+.s-body { font-size:1.05rem; font-style:italic; color:var(--text-muted); max-width:400px; line-height:1.75; }
+.s-back {
+  font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:0.25em;
+  border:1px solid var(--ocean-teal); color:var(--ocean-foam);
+  padding:0.7rem 1.75rem; background:none; cursor:pointer; transition:all 0.25s;
+}
+.s-back:hover { background:var(--ocean-teal); color:var(--ocean-abyss); }
+
+/* FADE IN */
+.fade { opacity:0; transform:translateY(18px); transition:opacity 0.8s ease, transform 0.8s ease; }
+.fade.in { opacity:1; transform:translateY(0); }
+
+footer {
+  border-top:1px solid rgba(42,155,168,0.1);
+  padding:3rem 2rem; text-align:center;
+  font-family:'Space Mono',monospace; font-size:0.62rem;
+  letter-spacing:0.2em; color:var(--text-muted);
+}
+footer strong { color:var(--coin-gold); display:block; font-size:1.5rem; margin-bottom:1rem; font-weight:400; }
+</style>
+</head>
+<body>
+
+<div class="success" id="success">
+  <div class="s-coin">J~</div>
+  <h2 class="s-title">You're in.</h2>
+  <p class="s-body">We'll reach out in a few days. Bring your jade.</p>
+  <button class="s-back" onclick="document.getElementById('success').classList.remove('show')">← back</button>
+</div>
+
+<nav class="nav">
+  <div class="nav-logo">Jade<span>HandForward</span></div>
+  <a href="index.html" class="nav-back">← buyer platform</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <svg class="hero-coast" viewBox="0 0 1400 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,180 C200,150 400,190 600,165 C800,140 1000,175 1200,155 C1300,145 1360,160 1400,150 L1400,300 L0,300Z" fill="rgba(26,107,122,0.18)"/>
+    <path d="M0,210 C180,185 380,215 580,195 C780,175 980,208 1180,188 C1300,175 1370,195 1400,182 L1400,300 L0,300Z" fill="rgba(10,42,58,0.4)"/>
+    <path d="M0,240 C150,220 320,248 520,230 C720,212 900,242 1100,224 C1260,208 1360,232 1400,218 L1400,300 L0,300Z" fill="rgba(4,13,20,0.7)"/>
+    <path d="M0,178 C200,148 400,188 600,163 C800,138 1000,173 1200,153 C1300,143 1360,158 1400,148" fill="none" stroke="rgba(94,196,204,0.15)" stroke-width="1.5"/>
+    <ellipse cx="320" cy="242" rx="18" ry="6" fill="rgba(45,106,79,0.5)"/>
+    <ellipse cx="348" cy="247" rx="11" ry="4" fill="rgba(82,183,136,0.35)"/>
+    <ellipse cx="298" cy="249" rx="8" ry="3" fill="rgba(42,155,168,0.3)"/>
+    <ellipse cx="1060" cy="238" rx="14" ry="5" fill="rgba(45,106,79,0.45)"/>
+    <ellipse cx="1085" cy="244" rx="9" ry="3" fill="rgba(82,183,136,0.3)"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">For Jade Hunters</div>
+    <span class="hero-coin">J~</span>
+    <h1 class="hero-title">
+      You found it.<br>
+      <em>We'll sell it.</em>
+    </h1>
+    <p class="hero-body">Live auctions for natural, hand-found jade. No storefront needed. Show up with your stones.</p>
+    <a href="#register" class="btn-ocean">Register as a Hunter</a>
+  </div>
+</section>
+
+<hr>
+
+<!-- HOW IT WORKS -->
+<section class="section fade">
+  <div class="section-eyebrow">How it works</div>
+  <h2 class="section-title">Simple as<br><em>low tide.</em></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">01</div>
+      <div class="step-t">Register</div>
+      <p class="step-d">Fill this out. We follow up personally. No fees, no credentials, just your jade.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div class="step-t">Go live</div>
+      <p class="step-d">You, your phone, your stones. Camera on. Buyers bid in real time using J~ coins.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div class="step-t">Get paid</div>
+      <p class="step-d">J~ coins convert to cash. Or hold them and buy from other hunters on the platform.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div class="step-t">Ship it</div>
+      <p class="step-d">Piece sold. You package it, drop it. Your provenance story goes with every stone.</p>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- REGISTER FORM -->
+<div class="form-wrap fade" id="register">
+  <div class="section-eyebrow">Hunter Registration</div>
+  <h2 class="section-title" style="margin-bottom:0.5rem;">Tell us about<br><em>you and your jade.</em></h2>
+  <p class="section-body" style="margin-bottom:3rem;">We read every one of these. Someone will write back.</p>
+
+  <form class="form" onsubmit="submit(event)">
+
+    <div class="row">
+      <div>
+        <label class="f-label">Name</label>
+        <input type="text" placeholder="Your name" required/>
+      </div>
+      <div>
+        <label class="f-label">Email</label>
+        <input type="email" placeholder="your@email.com" required/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label class="f-label">Phone <span style="opacity:0.4">(optional)</span></label>
+        <input type="tel" placeholder="If you'd rather talk"/>
+      </div>
+      <div>
+        <label class="f-label">Where are you based?</label>
+        <input type="text" placeholder="City or coast — Big Sur, Santa Cruz…"/>
+      </div>
+    </div>
+
+    <div>
+      <label class="f-label">Where do you find jade?</label>
+      <input type="text" placeholder="Jade Cove, Smith River, Russian River, wherever you go…"/>
+    </div>
+
+    <div>
+      <label class="f-label">How long have you been at it?</label>
+      <select>
+        <option value="" disabled selected>Pick one</option>
+        <option>Just started</option>
+        <option>1–3 years</option>
+        <option>3–10 years</option>
+        <option>More than 10 years</option>
+        <option>Grew up doing this</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="f-label">What are you finding? (check all that apply)</label>
+      <div class="stone-grid">
+        <div class="sc" onclick="tog(this)"><div class="sc-box"></div><span>Nephrite — green</span></div>
+        <div class="sc" onclick="tog(this)"><div class="sc-box"></div><span>Nephrite — dark</span></div>
+        <div class="sc" onclick="tog(this)"><div class="sc-box"></div><span>Nephrite — pale</span></div>
+        <div class="sc" onclick="tog(this)"><div class="sc-box"></div><span>Mixed / not sure</span></div>
+        <div class="sc" onclick="tog(this)"><div class="sc-box"></div><span>Other minerals too</span></div>
+      </div>
+    </div>
+
+    <div>
+      <label class="f-label">How much do you have to sell?</label>
+      <div class="vol-grid">
+        <div class="vo" onclick="vol(this)"><strong>A few pieces</strong><span>testing it out</span></div>
+        <div class="vo" onclick="vol(this)"><strong>A shoebox</strong><span>some good finds</span></div>
+        <div class="vo on" onclick="vol(this)"><strong>A collection</strong><span>years of hunting</span></div>
+        <div class="vo" onclick="vol(this)"><strong>Regular supply</strong><span>I hunt often</span></div>
+      </div>
+    </div>
+
+    <div>
+      <label class="f-label">Tell us about a piece you've found — your best one, or a favorite</label>
+      <textarea placeholder="Where you found it, what it looked like, why it stuck with you. Helps us understand what you carry."></textarea>
+    </div>
+
+    <div>
+      <label class="f-label">What do you need from this?</label>
+      <textarea placeholder="Fair price, good buyers, no hassle — whatever matters to you, say it."></textarea>
+    </div>
+
+    <div>
+      <label class="f-label">Open to commissioned hunts?</label>
+      <div class="comm-toggle" id="commToggle" onclick="comm()">
+        <div class="ct-box" id="commBox"></div>
+        <div>
+          <div class="ct-title">Yes — I'd do a dedicated hunt for a buyer</div>
+          <div class="ct-desc">A buyer commissions a trip. They fund it, you go, everything you find is theirs. We match you and handle the transaction.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="commExtra" style="display:none;">
+      <label class="f-label">Where would you hunt and what's fair compensation?</label>
+      <textarea placeholder="Location, how often you can go, what a fair day rate looks like for you."></textarea>
+    </div>
+
+    <div>
+      <label class="f-label">Anything else?</label>
+      <textarea placeholder="Open space." style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="submit-area">
+      <p class="submit-note">No commitment until you're ready. This is the start of a conversation.</p>
+      <button type="submit" class="submit-btn" id="sub">Send registration →</button>
+    </div>
+
+  </form>
+</div>
+
+<footer>
+  <strong>J~</strong>
+  JADEHANDFORWARD · HUNTERS &amp; COLLECTORS<br>
+  Natural only · No listing fees to start · Big Sur · California coast
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:0.07});
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+function tog(el) {
+  el.classList.toggle('on');
+  el.querySelector('.sc-box').textContent = el.classList.contains('on') ? '✓' : '';
+}
+
+function vol(el) {
+  document.querySelectorAll('.vo').forEach(v => v.classList.remove('on'));
+  el.classList.add('on');
+}
+
+let commOn = false;
+function comm() {
+  commOn = !commOn;
+  document.getElementById('commToggle').classList.toggle('on', commOn);
+  document.getElementById('commBox').textContent = commOn ? '✓' : '';
+  document.getElementById('commExtra').style.display = commOn ? 'block' : 'none';
+}
+
+function submit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('sub');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  setTimeout(() => document.getElementById('success').classList.add('show'), 800);
+}
+</script>
+</body>
+</html>

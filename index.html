@@ -84,6 +84,12 @@ body::after {
   letter-spacing:0.2em; text-decoration:none; transition:all 0.25s;
 }
 .nav-btn:hover { background:var(--coin-gold); color:var(--ocean-abyss); }
+.nav-link {
+  color:var(--text-muted); text-decoration:none;
+  border-bottom:1px solid transparent; transition:all 0.2s;
+  letter-spacing:0.2em;
+}
+.nav-link:hover { color:var(--ocean-foam); border-color:var(--ocean-foam); }
 
 /* ── HERO ── */
 .hero {
@@ -597,6 +603,7 @@ footer .fc { font-size:2rem; color:var(--coin-gold); display:block; margin-botto
   <div class="nav-right">
     <span><span class="nav-dot"></span>MINTING</span>
     <span class="nav-mint" id="coinNav">J~ 847 left</span>
+    <a href="hunters.html" class="nav-link">SELL JADE →</a>
     <a href="#register" class="nav-btn">GET COINS</a>
   </div>
 </nav>
