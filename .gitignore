@@ -1,0 +1,8 @@
+public/
+backend/.env
+backend/node_modules
+backend/dist
+node_modules
+.DS_Store
+*.log
+.vercel

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "mkdir -p public && cp index.html hunters.html api-config.js public/ && cd backend && npm install",
+    "build": "mkdir -p public && cp index.html hunters.html api-config.js public/ && (cd backend && npm install) && echo 'Build complete. Public directory:' && ls -la public/",
     "dev": "cd backend && npm run dev"
   },
   "dependencies": {
