@@ -38,12 +38,15 @@ create table coin_ledger (
   user_id uuid references profiles(id) on delete cascade,
   amount integer not null,           -- positive = credit, negative = debit
   type text not null check (type in (
-    'purchase',     -- bought coins via Stripe
-    'bid_hold',     -- coins held during active bid
-    'bid_release',  -- hold released (outbid or auction end)
-    'bid_won',      -- final debit when auction won
-    'seller_credit',-- seller receives coins from sale
-    'redemption'    -- seller cashes out coins
+    'purchase',          -- bought coins via Stripe
+    'bid_hold',          -- coins held during active bid
+    'bid_release',       -- hold released (outbid or auction end)
+    'bid_won',           -- final debit when auction won
+    'seller_credit',     -- seller receives coins from sale
+    'redemption',        -- seller cashes out coins
+    'marketplace_buy',   -- bought from marketplace (debit)
+    'marketplace_sell',  -- sold on marketplace (credit)
+    'marketplace_fee'    -- platform fee on marketplace transaction (debit)
   )),
   reference_id text,                 -- auction_id, bid_id, payment_intent_id, etc.
   note text,
@@ -173,6 +176,77 @@ create table hunt_commissions (
 );
 
 -- ============================================================================
+-- MARKETPLACE
+-- ============================================================================
+
+-- Marketplace listings: peer-to-peer coin trading and pre-auction jade sales
+create table marketplace_listings (
+  id uuid default gen_random_uuid() primary key,
+  seller_id uuid references profiles(id) on delete cascade,
+  listing_type text not null check (listing_type in ('coins', 'jade')),
+
+  -- For coin listings
+  coins_offered integer,
+  price_per_coin_usd numeric(10,2),  -- USD per coin
+
+  -- For jade listings
+  jade_title text,
+  jade_description text,
+  jade_images text[],                -- array of image URLs
+  jade_provenance text,
+  jade_price_coins integer,          -- price in J~ coins
+  jade_price_usd integer,            -- or price in USD cents
+
+  -- Common fields
+  sale_type text not null check (sale_type in ('fixed', 'offer')),
+  status text default 'active' check (status in (
+    'active', 'sold', 'cancelled', 'expired'
+  )),
+  created_at timestamptz default now(),
+  sold_at timestamptz,
+  expires_at timestamptz
+);
+
+-- Marketplace transactions: record of completed peer-to-peer sales
+create table marketplace_transactions (
+  id uuid default gen_random_uuid() primary key,
+  listing_id uuid references marketplace_listings(id),
+  seller_id uuid references profiles(id),
+  buyer_id uuid references profiles(id),
+  listing_type text not null,
+
+  -- Transaction amounts
+  coins_transacted integer,
+  usd_amount_cents integer,
+  platform_fee_usd_cents integer,    -- 5% platform fee
+
+  -- Payout tracking
+  seller_receives_coins integer,
+  seller_receives_usd_cents integer,
+  payout_status text default 'pending' check (payout_status in (
+    'pending', 'processing', 'complete', 'failed'
+  )),
+  stripe_transfer_id text,
+
+  created_at timestamptz default now()
+);
+
+-- Redemption requests: sellers cash out coins at $20/coin
+create table redemption_requests (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references profiles(id) on delete cascade,
+  coins_redeemed integer not null,
+  usd_payout_cents integer not null,     -- coins * 2000 cents ($20/coin)
+  status text default 'pending' check (status in (
+    'pending', 'approved', 'processing', 'complete', 'rejected'
+  )),
+  stripe_payout_id text,
+  rejection_reason text,
+  requested_at timestamptz default now(),
+  completed_at timestamptz
+);
+
+-- ============================================================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================================================
 
@@ -220,6 +294,23 @@ alter table hunt_commissions enable row level security;
 create policy "Own commissions" on hunt_commissions
   for select using (auth.uid() = buyer_id or auth.uid() = hunter_id);
 
+-- Marketplace listings: public read, sellers manage own
+alter table marketplace_listings enable row level security;
+create policy "Public read marketplace" on marketplace_listings
+  for select using (status = 'active');
+create policy "Sellers manage own listings" on marketplace_listings
+  for all using (auth.uid() = seller_id);
+
+-- Marketplace transactions: buyers and sellers see own
+alter table marketplace_transactions enable row level security;
+create policy "Own transactions" on marketplace_transactions
+  for select using (auth.uid() = buyer_id or auth.uid() = seller_id);
+
+-- Redemption requests: users see only their own
+alter table redemption_requests enable row level security;
+create policy "Own redemptions" on redemption_requests
+  for all using (auth.uid() = user_id);
+
 -- ============================================================================
 -- INDEXES
 -- ============================================================================
@@ -230,6 +321,12 @@ create index idx_coin_purchases_user_id on coin_purchases(user_id);
 create index idx_bids_lot_id on bids(lot_id);
 create index idx_bids_user_id on bids(user_id);
 create index idx_auction_lots_auction_id on auction_lots(auction_id);
+create index idx_marketplace_listings_seller_id on marketplace_listings(seller_id);
+create index idx_marketplace_listings_status on marketplace_listings(status);
+create index idx_marketplace_transactions_buyer_id on marketplace_transactions(buyer_id);
+create index idx_marketplace_transactions_seller_id on marketplace_transactions(seller_id);
+create index idx_redemption_requests_user_id on redemption_requests(user_id);
+create index idx_redemption_requests_status on redemption_requests(status);
 
 -- ============================================================================
 -- ENABLE REALTIME
@@ -240,3 +337,4 @@ create index idx_auction_lots_auction_id on auction_lots(auction_id);
 -- - bids
 -- - auction_lots
 -- - auctions
+-- - marketplace_listings

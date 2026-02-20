@@ -8,6 +8,7 @@ import coinRoutes from './routes/coins.js';
 import hunterRoutes from './routes/hunters.js';
 import agentRoutes from './routes/agent.js';
 import auctionRoutes from './routes/auction.js';
+import marketplaceRoutes from './routes/marketplace.js';
 
 config();
 
@@ -37,6 +38,7 @@ app.use('/api/coins', coinRoutes);
 app.use('/api/hunters', hunterRoutes);
 app.use('/api/agent', agentRoutes);
 app.use('/api/auction', auctionRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
