@@ -373,33 +373,33 @@ footer strong { color:var(--coin-gold); display:block; font-size:1.5rem; margin-
     <div class="row">
       <div>
         <label class="f-label">Name</label>
-        <input type="text" placeholder="Your name" required/>
+        <input type="text" name="name" placeholder="Your name" required/>
       </div>
       <div>
         <label class="f-label">Email</label>
-        <input type="email" placeholder="your@email.com" required/>
+        <input type="email" name="email" placeholder="your@email.com" required/>
       </div>
     </div>
 
     <div class="row">
       <div>
         <label class="f-label">Phone <span style="opacity:0.4">(optional)</span></label>
-        <input type="tel" placeholder="If you'd rather talk"/>
+        <input type="tel" name="phone" placeholder="If you'd rather talk"/>
       </div>
       <div>
         <label class="f-label">Where are you based?</label>
-        <input type="text" placeholder="City or coast — Big Sur, Santa Cruz…"/>
+        <input type="text" name="location" placeholder="City or coast — Big Sur, Santa Cruz…"/>
       </div>
     </div>
 
     <div>
       <label class="f-label">Where do you find jade?</label>
-      <input type="text" placeholder="Jade Cove, Smith River, Russian River, wherever you go…"/>
+      <input type="text" name="hunting_grounds" placeholder="Jade Cove, Smith River, Russian River, wherever you go…"/>
     </div>
 
     <div>
       <label class="f-label">How long have you been at it?</label>
-      <select>
+      <select name="experience">
         <option value="" disabled selected>Pick one</option>
         <option>Just started</option>
         <option>1–3 years</option>
@@ -432,12 +432,12 @@ footer strong { color:var(--coin-gold); display:block; font-size:1.5rem; margin-
 
     <div>
       <label class="f-label">Tell us about a piece you've found — your best one, or a favorite</label>
-      <textarea placeholder="Where you found it, what it looked like, why it stuck with you. Helps us understand what you carry."></textarea>
+      <textarea name="best_find" placeholder="Where you found it, what it looked like, why it stuck with you. Helps us understand what you carry."></textarea>
     </div>
 
     <div>
       <label class="f-label">What do you need from this?</label>
-      <textarea placeholder="Fair price, good buyers, no hassle — whatever matters to you, say it."></textarea>
+      <textarea name="needs" placeholder="Fair price, good buyers, no hassle — whatever matters to you, say it."></textarea>
     </div>
 
     <div>
@@ -453,12 +453,12 @@ footer strong { color:var(--coin-gold); display:block; font-size:1.5rem; margin-
 
     <div id="commExtra" style="display:none;">
       <label class="f-label">Where would you hunt and what's fair compensation?</label>
-      <textarea placeholder="Location, how often you can go, what a fair day rate looks like for you."></textarea>
+      <textarea name="commission_territory" placeholder="Location, how often you can go, what a fair day rate looks like for you."></textarea>
     </div>
 
     <div>
       <label class="f-label">Anything else?</label>
-      <textarea placeholder="Open space." style="min-height:80px;"></textarea>
+      <textarea name="notes" placeholder="Open space." style="min-height:80px;"></textarea>
     </div>
 
     <div class="submit-area">
@@ -497,11 +497,48 @@ function comm() {
   document.getElementById('commExtra').style.display = commOn ? 'block' : 'none';
 }
 
-function submit(e) {
+async function submit(e) {
   e.preventDefault();
   const btn = document.getElementById('sub');
+  const form = e.target;
+
   btn.textContent = 'Sending…'; btn.disabled = true;
-  setTimeout(() => document.getElementById('success').classList.add('show'), 800);
+
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  // Get checked stone types
+  const stoneTypes = Array.from(document.querySelectorAll('.sc.on')).map(el => el.textContent.trim());
+  data.stone_types = stoneTypes.join(', ') || null;
+
+  // Get selected volume
+  const volume = document.querySelector('.vo.on')?.textContent.trim().replace(/\s+/g, ' ');
+  data.volume = volume || null;
+
+  // Get commission status
+  data.commission_open = commissionOn || false;
+
+  try {
+    const response = await fetch('/api/hunters/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      document.getElementById('success').classList.add('show');
+    } else {
+      btn.textContent = 'Error — Try again';
+      btn.disabled = false;
+      alert(result.error || 'Registration failed');
+    }
+  } catch (error) {
+    btn.textContent = 'Error — Try again';
+    btn.disabled = false;
+    alert('Network error. Please try again.');
+  }
 }
 </script>
 </body>
