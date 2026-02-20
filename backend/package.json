@@ -1,0 +1,31 @@
+{
+  "name": "jadehandforward-backend",
+  "version": "1.0.0",
+  "description": "JadeHandForward backend - Live auction platform for natural California jade",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["jade", "auction", "platform"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@supabase/supabase-js": "^2.47.0",
+    "express": "^4.21.0",
+    "stripe": "^17.0.0",
+    "dotenv": "^16.4.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/cors": "^2.8.17",
+    "tsx": "^4.19.0"
+  }
+}
