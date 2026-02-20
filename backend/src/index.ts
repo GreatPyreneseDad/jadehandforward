@@ -51,8 +51,10 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`
+// Only listen when not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`
   ╔════════════════════════════════════════╗
   ║   JadeHandForward Backend Server       ║
   ║   Natural jade only · Never quarried   ║
@@ -63,5 +65,9 @@ app.listen(PORT, () => {
   📊 Health: http://localhost:${PORT}/health
 
   Environment: ${process.env.NODE_ENV || 'development'}
-  `);
-});
+    `);
+  });
+}
+
+// Export for Vercel serverless
+export default app;
