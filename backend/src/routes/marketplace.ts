@@ -425,7 +425,7 @@ async function processJadePurchase(listing: any, buyerId: string, res: any) {
 // REDEMPTIONS
 // ============================================================================
 
-// Request coin redemption (seller cashes out at $20/coin)
+// Request coin redemption (seller cashes out at $23/coin)
 router.post('/redeem', requireAuth, async (req: AuthRequest, res) => {
   try {
     const { coins } = req.body;
@@ -445,8 +445,8 @@ router.post('/redeem', requireAuth, async (req: AuthRequest, res) => {
       });
     }
 
-    // Calculate payout at $20/coin
-    const payoutCents = coins * 2000; // $20 = 2000 cents
+    // Calculate payout at $23/coin
+    const payoutCents = coins * 2300; // $23 = 2300 cents
 
     // Create redemption request
     const { data, error } = await supabase
@@ -471,7 +471,7 @@ router.post('/redeem', requireAuth, async (req: AuthRequest, res) => {
       amount: -coins,
       type: 'redemption',
       reference_id: data.id,
-      note: `Redemption request — ${coins} coins at $20/coin`,
+      note: `Redemption request — ${coins} coins at $23/coin`,
     });
 
     res.json({

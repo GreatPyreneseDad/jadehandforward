@@ -231,12 +231,12 @@ create table marketplace_transactions (
   created_at timestamptz default now()
 );
 
--- Redemption requests: sellers cash out coins at $20/coin
+-- Redemption requests: sellers cash out coins at $23/coin
 create table redemption_requests (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references profiles(id) on delete cascade,
   coins_redeemed integer not null,
-  usd_payout_cents integer not null,     -- coins * 2000 cents ($20/coin)
+  usd_payout_cents integer not null,     -- coins * 2300 cents ($23/coin)
   status text default 'pending' check (status in (
     'pending', 'approved', 'processing', 'complete', 'rejected'
   )),
